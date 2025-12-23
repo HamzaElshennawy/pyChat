@@ -25,8 +25,8 @@ Designed for **Local Area Networks (LAN)**, supporting both Wired (Ethernet) and
 1.  **Clone the repository**:
 
     ```bash
-    git clone https://github.com/yourusername/lan-chat-app.git
-    cd lan-chat-app
+    git clone https://github.com/HamzaElshennawy/pyChat.git
+    cd pyChat
     ```
 
 2.  **Install Dependencies**:
