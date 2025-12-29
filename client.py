@@ -270,7 +270,11 @@ class ChatClient(ctk.CTk):
         elif m_type == "ERROR":
             tk.messagebox.showerror("Error", content)
 
-    def on_disconnect(self):
+    def on_disconnect(self, content=""):
+        if len(content) > 0:
+            tk.messagebox.showerror(
+                "Connection Rejected", "The server has rejected the connection"
+            )
         tk.messagebox.showwarning("Disconnected", "Server closed connection.")
         self.destroy()
 

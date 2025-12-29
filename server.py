@@ -4,6 +4,7 @@ import signal
 import sys
 from database import DatabaseManager
 from protocol import PORT, send_message, receive_message
+import time
 
 
 class ChatServer:
@@ -59,6 +60,7 @@ class ChatServer:
                             "content": f"Access Denied: Account bound to {stored_ip}",
                         },
                     )
+                    time.sleep(1)
                     client_socket.close()
                     return
 
