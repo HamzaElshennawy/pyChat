@@ -267,6 +267,9 @@ class ChatClient(ctk.CTk):
             frame = self.get_or_create_frame("all")
             frame.add_message("SYSTEM", content)
 
+        elif m_type == "ERROR":
+            tk.messagebox.showerror("Error", content)
+
     def on_disconnect(self):
         tk.messagebox.showwarning("Disconnected", "Server closed connection.")
         self.destroy()
