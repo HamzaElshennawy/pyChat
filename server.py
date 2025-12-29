@@ -60,7 +60,6 @@ class ChatServer:
                             "content": f"Access Denied: Account bound to {stored_ip}",
                         },
                     )
-                    time.sleep(1)
                     client_socket.close()
                     return
 
