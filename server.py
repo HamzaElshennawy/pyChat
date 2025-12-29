@@ -45,10 +45,27 @@ class ChatServer:
                     client_socket.close()
                     return
 
+                # Check IP Restriction
+                client_ip = address[0]
+                stored_ip = self.db.get_user_ip(username)
+                if stored_ip and stored_ip != client_ip:
+                    print(
+                        f"[REJECTED] {username} from {client_ip} (Expected: {stored_ip})"
+                    )
+                    send_message(
+                        client_socket,
+                        {
+                            "type": "ERROR",
+                            "content": f"Access Denied: Account bound to {stored_ip}",
+                        },
+                    )
+                    client_socket.close()
+                    return
+
                 # Register user
                 self.clients[username] = client_socket
                 self.sockets[client_socket] = username
-                self.db.add_user(username)
+                self.db.add_user(username, client_ip)
 
                 print(f"[LOGIN] User: {username}")
 
@@ -152,8 +169,8 @@ class ChatServer:
             if client_socket in self.sockets:
                 del self.sockets[client_socket]
             client_socket.close()
+            # self.broadcast({"type": "USER_LIST", "content": list(self.clients.keys())})
             # Update user lists
-            self.broadcast({"type": "USER_LIST", "content": list(self.clients.keys())})
 
     def start(self):
         print("[SERVER CONNECTED] Waiting for connections...")

@@ -5,10 +5,10 @@ import base64
 # Configuration
 PORT = 5555
 HEADER_LENGTH = 10
-FORMAT = 'utf-8'
+FORMAT = "utf-8"
 
-# Basic "Encryption" utilizing Base64 and a simple rotation to meet requirements
-# In a real production app, use SSL/TLS (ssl module) or Fernet (cryptography module).
+
+# Basic "Encryption" utilizing Base64 and a simple rotation.
 def encrypt_message(message):
     """
     Simple obfuscation to avoid plain text transmission.
@@ -24,6 +24,7 @@ def encrypt_message(message):
         print(f"Encryption error: {e}")
         return message
 
+
 def decrypt_message(encrypted_message):
     """
     Reverses the obfuscation.
@@ -37,6 +38,7 @@ def decrypt_message(encrypted_message):
         print(f"Decryption error: {e}")
         return encrypted_message
 
+
 def send_message(sock, message_dict):
     """
     Sends a JSON-serialized message with a fixed-length header.
@@ -45,16 +47,16 @@ def send_message(sock, message_dict):
     try:
         # 1. Serialize to JSON
         json_data = json.dumps(message_dict)
-        
+
         # 2. Encrypt the content part if it exists, or encrypt the whole JSON?
         # Let's encrypt the whole JSON string to hide metadata too.
         encrypted_data = encrypt_message(json_data)
-        
+
         # 3. Prepare Header (Fixed 10 bytes)
-        # Only allow 10 bytes for size. 
+        # Only allow 10 bytes for size.
         message_length = len(encrypted_data)
         header = f"{message_length:<{HEADER_LENGTH}}"
-        
+
         # 4. Send
         sock.send(header.encode(FORMAT))
         sock.send(encrypted_data.encode(FORMAT))
@@ -62,6 +64,7 @@ def send_message(sock, message_dict):
     except Exception as e:
         print(f"Error sending message: {e}")
         return False
+
 
 def receive_message(sock):
     """
@@ -73,10 +76,9 @@ def receive_message(sock):
         header = sock.recv(HEADER_LENGTH)
         if not header:
             return None
-        
+
         message_length = int(header.decode(FORMAT).strip())
-        
-        # 2. Read Data
+
         # Ensure we read the full message
         data = b""
         while len(data) < message_length:
@@ -84,12 +86,12 @@ def receive_message(sock):
             if not packet:
                 return None
             data += packet
-            
+
         encrypted_data = data.decode(FORMAT)
-        
+
         # 3. Decrypt
         decrypted_json = decrypt_message(encrypted_data)
-        
+
         # 4. Deserialize
         return json.loads(decrypted_json)
     except Exception as e:
